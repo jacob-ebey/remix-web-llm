@@ -1,0 +1,67 @@
+diff --git a/node_modules/@remix-run/dev/dist/compiler/js/plugins/hmr.js b/node_modules/@remix-run/dev/dist/compiler/js/plugins/hmr.js
+index 4714c07..61e832e 100644
+--- a/node_modules/@remix-run/dev/dist/compiler/js/plugins/hmr.js
++++ b/node_modules/@remix-run/dev/dist/compiler/js/plugins/hmr.js
+@@ -66,26 +66,28 @@ declare global {
+   }
+ }
+ 
+-var prevRefreshReg = window.$RefreshReg$;
+-var prevRefreshSig = window.$RefreshSig$;
+-
+-window.$RefreshReg$ = (type, id) => {
+-  const fullId = id;
+-  RefreshRuntime.register(type, fullId);
+-};
+-window.$RefreshReg$ = prevRefreshReg;
+-window.$RefreshSig$ = prevRefreshSig;
+-window.$RefreshSig$ = RefreshRuntime.createSignatureFunctionForTransform;
+-window.$RefreshRuntime$ = RefreshRuntime;
+-
+-window.$RefreshRuntime$.injectIntoGlobalHook(window);
+-window.$RefreshReg$ = () => {};
+-window.$RefreshSig$ = () => (type) => type;
++if (typeof window !== "undefined") {
++  var prevRefreshReg = window.$RefreshReg$;
++  var prevRefreshSig = window.$RefreshSig$;
+ 
+-if (!window.__hmr__) {
+-  window.__hmr__ = {
+-    contexts: {},
++  window.$RefreshReg$ = (type, id) => {
++    const fullId = id;
++    RefreshRuntime.register(type, fullId);
+   };
++  window.$RefreshReg$ = prevRefreshReg;
++  window.$RefreshSig$ = prevRefreshSig;
++  window.$RefreshSig$ = RefreshRuntime.createSignatureFunctionForTransform;
++  window.$RefreshRuntime$ = RefreshRuntime;
++
++  window.$RefreshRuntime$.injectIntoGlobalHook(window);
++  window.$RefreshReg$ = () => {};
++  window.$RefreshSig$ = () => (type) => type;
++
++  if (!window.__hmr__) {
++    window.__hmr__ = {
++      contexts: {},
++    };
++  }
+ }
+ 
+ export function createHotContext(id: string): ImportMetaHot {
+@@ -126,10 +128,12 @@ export function createHotContext(id: string): ImportMetaHot {
+     },
+   };
+ 
+-  if (window.__hmr__.contexts[id]) {
+-    window.__hmr__.contexts[id].dispose();
++  if (typeof window !== "undefined") {
++    if (window.__hmr__.contexts[id]) {
++      window.__hmr__.contexts[id].dispose();
++    }
++    window.__hmr__.contexts[id] = hot;
+   }
+-  window.__hmr__.contexts[id] = hot;
+ 
+   return hot;
+ }
