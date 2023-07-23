@@ -16,12 +16,18 @@ const markdownProps: Partial<React.ComponentProps<typeof SyntaxHighlighter>> = {
   components: {
     code({ node, inline, className, children, ...props }) {
       const match = /language-(\w+)/.exec(className || "");
+      console.log(props);
       return !inline && match ? (
         <SyntaxHighlighter
           {...props}
+          style={{
+            'pre[class*="language-"]': {
+              backgroundColor: "#1d1f21",
+            },
+          }}
           children={String(children).replace(/\n$/, "")}
           language={match[1]}
-          PreTag="div"
+          PreTag={undefined}
         />
       ) : (
         <code {...props} className={className}>
@@ -141,7 +147,6 @@ function InitProgress() {
     return null;
   }
 
-  console.log({ progress });
   if (progress === 0 || (progress === 1 && !llm.initialized)) {
     return (
       <form

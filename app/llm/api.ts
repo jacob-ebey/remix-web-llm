@@ -129,7 +129,7 @@ export class LLMAPI {
         console.log("LLM API initialized");
       })
       .catch((error) => {
-        console.error(error);
+        console.error("LLM initialize error", error);
         this.initPromise = null;
       });
   }
